@@ -18,6 +18,7 @@ This document helps user deploy portworx storage with IBM Cloud Red Hat Openshif
 ### Tools needed on developer laptop
 - oc CLI
 - ibmcloud CLI
+- helm CLI
 
 ----
 
@@ -94,7 +95,7 @@ _Please note: Above script will provision required block storage using your IBM 
 docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=<classic_infra_key> -e SL_USERNAME=2XXXXXX_cvishal@in.ibm.com cvishal/ibmcloud-block-storage-provisioner
 
 ```
-- Look newly generated script, example pv-<clustername>.yaml
+- Look newly generated script, example `pv-<clustername>.yaml`
 - This script does ibmcloud sl block access-authorize, so need to call explictly
 - `oc apply -f pv-<clustername>.yaml`
 - This will attach additional storage to ROKS Cluster.
