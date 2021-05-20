@@ -48,7 +48,7 @@ helm install block-attacher iks-charts/ibm-block-storage-attacher --namespace ku
 
 ### Step 2 Setup Block Storage for Portworx on IBM Cloud  (Automated Via Script)
 
-Please note that if you don't want to use ibmcloud-block-storage-provisioner script, you can manually create new volume and attach to each instance of woker node. Please look at the instructions specified in Appendix A and skip this step 2 completly.
+_Please note that if you don't want to use ibmcloud-block-storage-provisioner script, you can manually create new volume and attach to each instance of woker node. Please look at the instructions specified in Appendix A and skip this step 2 completly._
 
 
 #### Please refer https://github.com/IBM/ibmcloud-storage-utilities
@@ -96,9 +96,9 @@ docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=<classic_infr
 
 ```
 - Look newly generated script, example `pv-<clustername>.yaml`
-- This script does ibmcloud sl block access-authorize, so need to call explictly
 - `oc apply -f pv-<clustername>.yaml`
 - This will attach additional storage to ROKS Cluster.
+- `oc describe pv | grep -i attachs` and wait untile you see status as attached.
 
 ### Step 3 Provision 'Portworx Enterprise' from IBM Cloud Catalog
 - Select KVDB instead of etcd
