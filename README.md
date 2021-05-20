@@ -3,7 +3,8 @@
 
 ### Introduction:
 This document helps user deploy portworx storage with IBM Cloud Red Hat Openshift Kubernetes Service (ROKS). It was created for the purpose of Watson Cloud Pak for AIOPs V 3.1 Deployment.
-Contributors: cvishal@in.ibm.com, 
+
+_Contributors: cvishal@in.ibm.com,sagar.kumar3@ibm.com,anand.awasthi@in.ibm.com_
 
 ---
 ### Installation High Level Steps
