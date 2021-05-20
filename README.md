@@ -3,6 +3,7 @@
 
 ### Introduction:
 This document helps user deploy portworx storage with IBM Cloud Red Hat Openshift Kubernetes Service (ROKS). It was created for the purpose of Watson Cloud Pak for AIOPs V 3.1 Deployment.
+Contributors: cvishal@in.ibm.com, 
 
 ---
 ### Installation High Level Steps
@@ -15,11 +16,12 @@ This document helps user deploy portworx storage with IBM Cloud Red Hat Openshif
 
 -----
 
-### Tools needed on developer laptop
-- oc CLI
-- ibmcloud CLI
-- helm CLI
-
+### Tools / CLIs needed on developer laptop
+- oc 
+- ibmcloud 
+- helm 
+- python3
+- docker runtime
 ----
 
 ### Step 1  Install Attacher Plugin (block-attacher) using helm chart
@@ -51,19 +53,16 @@ helm install block-attacher iks-charts/ibm-block-storage-attacher --namespace ku
 _Please note that if you don't want to use ibmcloud-block-storage-provisioner script, you can manually create new volume and attach to each instance of woker node. Please look at the instructions specified in Appendix A and skip this step 2 completly._
 
 
-#### Please refer https://github.com/IBM/ibmcloud-storage-utilities
+**Please refer https://github.com/IBM/ibmcloud-storage-utilities and build script**
 
 - Clone `git clone https://github.com/IBM/ibmcloud-storage-utilities.git`
 - `cd ibmcloud-storage-utilities/block-storage-provisioner`
+- Build the docker image which will be used for storage provisioning. 
+- Make sure you have python3 and docker on this machine
+- `make all` which will build a new docker image `ibmcloud-block-storage-provisioner:latest`
+- Use your own docker image `ibmcloud-block-storage-provisioner:latest`
 
-- Leverage `cvishal/ibmcloud-block-storage-provisioner:latest` and skip following 3 steps, but I encourage you to build your own docker image. Its quick.
-
-```
-1. Make sure you have python3 and docker on this machine
-2. `make all`
-3. Use your own docker image `ibmcloud-block-storage-provisioner:latest`
-```
-
+**Use script to setup storage**
 - Edit yamlgen.yaml
 - Make sure it points to your ROKS cluster. Example below, cluster name is **waiops31dev**
 - Give the volume size as per your requirements.
@@ -89,10 +88,9 @@ _Please note: Above script will provision required block storage using your IBM 
 
 - Make sure your fresh login to ibmcloud `ibmcloud login --sso` before. 
 - Run following command from same directory where yamlgen.yaml is present.
-- If you have built your own docker image, please use it instead of using cvishal/ibmcloud-block-storage-provisioner
 
 ```
-docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=<classic_infra_key> -e SL_USERNAME=2XXXXXX_cvishal@in.ibm.com cvishal/ibmcloud-block-storage-provisioner
+docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=<classic_infra_key> -e SL_USERNAME=2XXXXXX_cvishal@in.ibm.com ibmcloud-block-storage-provisioner
 ```
 - Look newly generated script, example `pv-<clustername>.yaml`
 - `oc apply -f pv-<clustername>.yaml`
