@@ -48,7 +48,7 @@ helm install block-attacher iks-charts/ibm-block-storage-attacher --namespace ku
 
 ### Step 2 Setup Block Storage for Portworx on IBM Cloud  (Automated Via Script)
 
-`Please note that if you don't want to use ibmcloud-block-storage-provisioner script, you can manually create new volume and attach to each instance of woker node. Please look at the instructions specified in Appendix A and skip this step 2 completly`
+Please note that if you don't want to use ibmcloud-block-storage-provisioner script, you can manually create new volume and attach to each instance of woker node. Please look at the instructions specified in Appendix A and skip this step 2 completly.
 
 
 #### Please refer https://github.com/IBM/ibmcloud-storage-utilities
@@ -104,14 +104,37 @@ docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=<classic_infr
 - Select KVDB instead of etcd
 - Give IBM Cloud API Key (Standard API Key from Access IAM ->  API Keys -> IBM Cloud API Key)
 - Select your resource group -> OCP Cluster
+- Click on Provision
 
 ### Step 4 validate 
-- Use following file to test the StorageClass
+- Go to command line and `oc get pods -n kube-system`
+- Make sure all portworx related pods and up and running 
+- Test the storage by creating PVC 
+
+Example: 
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: testpvc
+ namespace: default
+spec:
+ storageClassName: "portworx-shared-sc"
+ accessModes:
+ - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+```
+- Run this testpvc and make sure PV gets created and attached to this PVC.
+
 ------
 
 
 ## Portwork Cleanup Process (if needed)
 
+_Please dont execute this if you have important system. This script will clean all the storage and portworx instance etc._
 
 - When run into problem make sure you cleanup the storage
 - Use Git project - https://github.com/IBM/ibmcloud-storage-utilities 
@@ -119,31 +142,45 @@ docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=<classic_infr
 - Run `px_cleanup.sh` which will clean Portworx Storage Classes, pods, daemonsets, etc and free Block Storage. It also clean Protworx Enterprise service etc
 - After cleanup script, make sure you revoke access of storage from all worker nodes
 
+
+----
+
+## Some Tips and useful commands:
+
+- Get attached stoarge for each node. Execute this after running the commad `oc apply -f pv-<clustername>.yaml`
+- Get all nodes and for each node, run 'lsblk' command
+
+Example: You have 3 nodes in your ROKS Cluster
+
 ```
-TDB
+oc get nodes
+NAME          STATUS   ROLES           AGE   VERSION
+10.185.2.39   Ready    master,worker   22h   v1.19.0+d856161
+10.185.2.49   Ready    master,worker   22h   v1.19.0+d856161
+10.185.2.51   Ready    master,worker   22h   v1.19.0+d856161
+
+
+oc debug node/10.185.2.39 -- chroot /host lsblk
+oc debug node/10.185.2.49 -- chroot /host lsblk
+oc debug node/10.185.2.51 -- chroot /host lsblk
+
 ```
-
-------
-
-### Step 5 Add ImagePullSecrets at Global 
+- Make sure you see the storage which you have requested to attach and not more or less.
 
 
+- Create a small script which check Portworx Status on each node.
 
+- vi check-pxctl-status.sh and add following lines (example for 3 node cluster)
+```
+PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[0].metadata.name}')
+kubectl exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status
+PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[1].metadata.name}')
+kubectl exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status
+PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[2].metadata.name}')
+kubectl exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
+----
 
 ## Appendix A: If dont want to use script provided by IBM, you can manually create volume and attach to all worker nodes.
 
@@ -235,8 +272,4 @@ spec:
 #### LOOP ENDS HERE FOR EACH WORKER NODE
 
 ------
-
-
-
-
 - Once all Block Storage is provisioned and PVs are created, you can proceed for Portworx Enterprise Service installation.
