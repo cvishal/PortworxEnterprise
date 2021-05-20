@@ -63,11 +63,12 @@ _Please note that if you don't want to use ibmcloud-block-storage-provisioner sc
 - Use your own docker image `ibmcloud-block-storage-provisioner:latest`
 
 **Use script to setup storage**
+
 - Edit yamlgen.yaml
 - Make sure it points to your ROKS cluster. Example below, cluster name is **waiops31dev**
 - Give the volume size as per your requirements.
-
 - Example:
+
 ```
 cluster: waiops31dev  #  name of ROKS cluster
 region:  us-south       #  cluster region
@@ -129,7 +130,7 @@ spec:
 ------
 
 
-## Portwork Cleanup Process (if needed)
+## Portwork Cleanup Process (Be Careful)
 
 _Please dont execute this if you have important system. This script will clean all the storage and portworx instance etc._
 
