@@ -4,7 +4,6 @@
 ### Introduction:
 This document helps user deploy portworx storage with IBM Cloud Red Hat Openshift Kubernetes Service (ROKS). It was created for the purpose of Watson Cloud Pak for AIOPs V 3.1 Deployment.
 
-_Contributors: cvishal@in.ibm.com,sagar.kumar3@ibm.com,anand.awasthi@in.ibm.com_
 
 ---
 ### Installation High Level Steps
@@ -180,6 +179,15 @@ kubectl exec $PX_POD -n kube-system -- /opt/pwx/bin/pxctl status
 
 ```
 ----
+
+## Contributors:
+- _cvishal@in.ibm.com_
+- _sagar.kumar3@ibm.com_
+- _anand.awasthi@in.ibm.com_
+
+----
+
+
 
 ## Appendix A: If dont want to use script provided by IBM, you can manually create volume and attach to all worker nodes.
 
