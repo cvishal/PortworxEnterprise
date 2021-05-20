@@ -7,7 +7,7 @@ This document helps user deploy portworx storage with IBM Cloud Red Hat Openshif
 ---
 ### Installation High Level Steps
 
-- Provision ROKS Cluster 5 Worker Nodes (16Cores/64GB) 
+- Provision ROKS Cluster 5 Worker Nodes (16Cores/64GB) - Classic Infra
 - Use IBM Cloud Block Attacher Plugin, 
 - Provision and attach Block Storage, using predefined script.
 - Install Portworx Enterprise from IBM Cloud Catalog
